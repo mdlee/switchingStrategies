@@ -1,0 +1,45 @@
+# switching strategies: TTB, EQWTTB, WADD, Guess
+
+data{
+	for (m in 1:nStrategies){
+	   baseStrategies[m] = 1
+	}
+}
+
+model{
+  for (i in 1:nSubjects){
+	 for (t in 1:nTrials){
+	   # Observed decision
+	   decision[i, t] ~ dbern(equals(choice[i, t, z[i, stage[i, t]]],   1) * (1 - epsilon[i])
+	                     + equals(choice[i, t, z[i, stage[i, t]]],   0) * epsilon[i]
+	                     + equals(choice[i, t, z[i, stage[i, t]]], 0.5) * 0.5)
+	   # Stage for this subject at this trial
+		stage[i, t] = sum(beyond[i, t, 1:nMaxSwitches]) + 1
+		for (k in 1:nMaxSwitches){
+		  # is trial to the right of boundary?
+		  beyond[i, t, k] = step(t - tau[i, k] - 1)
+	   }
+	 }
+	 # Model priors
+	 epsilon[i] ~ dunif(0, 0.5)
+	 # Strategy switch priors
+	 tau[i, 1:nMaxSwitches] = sort(tauTmp[i, ])
+	 for (x in 1:nMaxSwitches){
+	   tauTmp[i, x] ~ dunif(1, gamma[i]/(1-gamma[i])*nTrials)
+	 }
+	 z[i, 1] ~ dcat(baseStrategies)
+    for (x in 2:(nMaxSwitches+1)){
+      z[i, x] ~ dcat(pi[z[i, x-1], 1:nStrategies])
+    }
+    gamma[i] ~ dnorm(muGamma, 1/sigmaGamma^2)T(0.5, 1)
+  } 
+  muGamma ~ dunif(0.5, 1)
+  sigmaGamma ~ dunif(0, 0.5)
+  # Strategy change baserate
+  for (j1 in 1:nStrategies){
+    for (j2 in 1:nStrategies){
+      basePi[j1, j2] = 1 - equals(j1, j2)  # 0 if j1 == j2, 1 otherwise
+    }
+    pi[j1, 1:nStrategies] ~ ddirch(basePi[j1, 1:nStrategies])
+  }
+}
