@@ -63,7 +63,7 @@ model{
 	  for (x in 1:nMaxSwitches){
 	    tauTmp[i, x] ~ dunif(1, gamma[i]/(1-gamma[i])*nTrials)
 	  }
-	  z[i, 1] ~ dcat(baseStrategies)
+	  z[i, 1] ~ dcat(piPrime[1:nStrategies])
     for (x in 2:(nMaxSwitches+1)){
       z[i, x] ~ dcat(pi[z[i, x-1], 1:nStrategies])
     }
@@ -72,7 +72,8 @@ model{
   muGamma ~ dunif(0.5, 1)
   sigmaGamma ~ dunif(0, 0.5)
 
-  # Strategy change baserate
+  # Strategy baserate
+  piPrime ~ ddirch(baseStrategies[1:nStrategies])
   for (j1 in 1:nStrategies){
     for (j2 in 1:nStrategies){
       basePi[j1, j2] = 1 - equals(j1, j2)  # 0 if j1 == j2, 1 otherwise

@@ -10,8 +10,8 @@ model{
  for (i in 1:nSubjects){
 	for (t in 1:nTrials){
 	   # Observed decision
-	   decision[i, t] ~ dbern(equals(choice[i, t, z[i, stage[i, t]]],   1) * (1 - epsilon[i])
-	                     + equals(choice[i, t, z[i, stage[i, t]]],   0) * epsilon[i]
+	   decision[i, t] ~ dbern(equals(choice[i, t, z[i, stage[i, t]]], 1) * (1 - epsilon[i])
+	                     + equals(choice[i, t, z[i, stage[i, t]]], 0) * epsilon[i]
 	                     + equals(choice[i, t, z[i, stage[i, t]]], 0.5) * 0.5)
 
 	   # Stage for this subject at this trial
@@ -38,16 +38,17 @@ model{
 	  tauTmp[i, x] ~ dunif(1, gamma[i]/(1-gamma[i])*nTrials)
 	 }
 	 # Strategy use priors
-	 z[i, 1] ~ dcat(baseStrategies)
+	 z[i, 1] ~ dcat(piPrime[1:nStrategies])
     for (x in 2:(nMaxSwitches+1)){
       z[i, x] ~ dcat(pi[z[i, x-1], 1:nStrategies])
     }
-    gamma[i] ~ dnorm(muGamma, 1/sigmaGamma^2)
+    gamma[i] ~ dnorm(muGamma, 1/sigmaGamma^2)T(0.5, 1)
   }
   muGamma ~ dunif(0.5, 1)
   sigmaGamma ~ dunif(0, 0.5)
  
-  # Strategy change baserate
+  # Strategy baserate
+  piPrime ~ ddirch(baseStrategies[1:nStrategies])
   for (j1 in 1:nStrategies){
     for (j2 in 1:nStrategies){
       basePi[j1, j2] = 1 - equals(j1, j2)  # 0 if j1 == j2, 1 otherwise

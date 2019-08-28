@@ -56,12 +56,13 @@ model{
     for (j in 7:9){
       epsilon[i, j] ~ dunif(0, 1)
     }
-	  z[i, 1] ~ dcat(baseStrategies)
+    z[i, 1] ~ dcat(piPrime[1:nStrategies])
     for (x in 2:(nSwitches[i]+1)){
       z[i, x] ~ dcat(pi[z[i, x-1], 1:nStrategies])
     }
   }
-  # Strategy change baserate
+  # Strategy baserate
+  piPrime ~ ddirch(baseStrategies[1:nStrategies])
   for (j1 in 1:nStrategies){
     for (j2 in 1:nStrategies){
       basePi[j1, j2] = equals(j1, j2)*(-1) + 1  # 0 if j1 == j2, 1 otherwise
