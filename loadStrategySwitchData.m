@@ -127,8 +127,43 @@ switch dataName
       d.itemType = tmpItemType;
       
    case 'NewellShanksAll2003'
-      load ../data/NewellShanks2003Data d;
+       load ../data/NewellShanks2003Data d;
+     % low- then high-cost
+      reorder = [2, 4, 6, 8, 10, 11, 13, 16, 1, 3, 5, 7, 9, 12, 14, 15]; 
+        d.reward = d.reward(reorder, :);
+      d.decision = d.decision(reorder, :);
+      d.search = d.search(:, :, reorder, :);
+      d.stimulus = d.stimulus(:, :, reorder, :);
+      d.condition = d.condition(reorder);
       % map choices from 1=a, 2=b to 1=a, 0=b
+      d.decision(find(d.decision == 2)) = 0;
+      d.cues = unique(squeeze(d.stimulus(:, 1, :))', 'rows');
+      [~, d.searchOrder] = sort(d.validity, 'descend');
+     
+      
+   case 'NewellShanksHighCost2003'
+      load ../data/NewellShanks2003Data d;
+      
+      keep = [1, 3, 5, 7, 9, 12, 14, 15];
+      d.nSubjects = length(keep);
+      d.reward = d.reward(keep, :);
+      d.decision = d.decision(keep, :);
+      d.search = d.search(:, :, keep, :);
+      d.stimulus = d.stimulus(:, :, keep, :);
+      % map choices from 1=a, 2=b to 1=a, 0=b
+      d.decision(find(d.decision == 2)) = 0;
+      d.cues = unique(squeeze(d.stimulus(:, 1, :))', 'rows');
+      [~, d.searchOrder] = sort(d.validity, 'descend');
+      
+      
+   case 'NewellShanksLowCost2003'
+      load ../data/NewellShanks2003Data d;
+      keep = setdiff(1:16, [1, 3, 5, 7, 9, 12, 14, 15]);
+      d.nSubjects = length(keep);
+      d.reward = d.reward(keep, :);
+      d.decision = d.decision(keep, :);
+      d.search = d.search(:, :, keep, :);
+      d.stimulus = d.stimulus(:, :, keep, :);% map choices from 1=a, 2=b to 1=a, 0=b
       d.decision(find(d.decision == 2)) = 0;
       d.cues = unique(squeeze(d.stimulus(:, 1, :))', 'rows');
       [~, d.searchOrder] = sort(d.validity, 'descend');
@@ -190,7 +225,7 @@ switch dataName
       for subjIdx = 1:d.nSubjects
          for trialIdx = 1:d.nTrials
             for stratIdx = 1:nStrategies
-               d.choice(subjIdx, trialIdx, stratIdx) = predictionBrusovansky(d.values(:, 1, trialIdx, subjIdx), d.values(:, 2, trialIdx, subjIdx), d.cues(:, 1, trialIdx, subjIdx), d.cues(:, 2, trialIdx, subjIdx), d.validity, strategyList{stratIdx});
+               d.choice(subjIdx, trialIdx, stratIdx) = predictBrusovanskyEtAl(d.values(:, 1, trialIdx, subjIdx), d.values(:, 2, trialIdx, subjIdx), d.cues(:, 1, trialIdx, subjIdx), d.cues(:, 2, trialIdx, subjIdx), d.validity, strategyList{stratIdx});
             end
          end
       end
