@@ -85,7 +85,9 @@ The color palette `PantoneSpring2015.mat`.
 
 There are two sets of JAGS scripts: one set for the hierarchical model with one group (prefix `ss_`), and another for the latent mixture extension with two groups (prefix `ssLM_`). The hierarchical case has two scripts (suffixes `_A` and `_B`) for inferring switch points, then inferring strategy use conditional on switch points. The latent mixture case has three scripts  (suffixes `_A` and `_B` and `_C`) for inferring group membership, inferring switch points conditional on group membership, then inferring strategy use conditional on group membership and switch points.
 
-For both models, these collections of scripts are separately specified for each relevant sets of candidate strategies. There are currently three such sets: the generic collection TTB, Tally, WADD, and Guess (named`TTBTallyWADDGuess`), and two special sets tailored to the Hilbig and Moshagen strategies (named `GuessTTBTallyWADDWADDprobSaturated`) and the Brusovansky et al strategies (named `TTBEQWTTBWADDGuess`). It would be possible to consider other sets of strategies by building the appropriate collection of scripts, with these as guides.
+For both models, these collections of scripts are separately specified for each relevant sets of candidate strategies. There are currently three such sets: the generic collection TTB, Tally, WADD, and Guess (named`TTBTallyWADDGuess`), and two special sets tailored to the Hilbig and Moshagen strategies (named `GuessTTBTallyWADDWADDprobSaturated`) and the Brusovansky et al strategies (named `TTBEQWTTBWADDGuess`). 
+
+The  Hilbig and Moshagen and Brusovansky et al  also have custom scripts for generating the predictions of the strategies then consider, using the functions `predictHilbigMoshagen.m` and `predictBrusovanskyEtAl.m`It would be possible to consider other sets of strategies by building the appropriate collection of JAGS scripts and MATLAB prediction functions, using these as guides.
 
 There are two parts of the scripts below the user input block that would need updating for new sets of strategies. These parts are when the data structured variable is first being constructed
 
