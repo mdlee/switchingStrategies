@@ -74,6 +74,11 @@ function outputCombinedTransitionTable(dataName, modelName, strategyList, storeP
 %  highlighting of successive sets
 ```
 
+```function colorVec = getStrategyColor(strategyName, pantone)
+function colorVec = getStrategyColor(strategyName, pantone)
+% GETSTRATEGYCOLOR Get the pantone color of a strategy
+```
+
 The color palette `PantoneSpring2015.mat`.
 
 ## JAGS Scripts
