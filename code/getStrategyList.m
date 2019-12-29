@@ -1,8 +1,10 @@
 function [strategyList, paramsOne, paramsTwo, paramsThree] = getStrategyList(modelName)
-%GETSTRATEGYLIST Get the list of strategy names associated with a ss_ model
-% and the parameter list for the first switch-detection inference, and the
-% second strategy use and transition matrix inference
-%    [strategyList, paramsOne, paramsTwo] = getStrategyList(modelName)
+  % GETSTRATEGYLIST Get the list of strategy names associated with a ss_ model
+  %   or ssLM_ model for the hierarchical models and its latent mixture extension
+  %   also gets the parameter lists for the first switch-detection inference and the
+  %   second strategy use and transition matrix inference (for the hierarchical model)
+  %   or the first latent mixture inference, second switch-detection inference and the
+  %   third strategy use and transition matrix inference (for the latent mixture extenion)
 
 switch modelName
    
@@ -38,8 +40,7 @@ switch modelName
       paramsOne = {'x', 'phi'};
       paramsTwo = {'tau', 'gamma', 'muGamma', 'sigmaGamma'};
       paramsThree = {'epsilon', 'z', 'pi', 'piPrime', 'choice'};
-      
-      
+           
 end
 
 

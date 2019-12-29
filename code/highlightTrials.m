@@ -1,5 +1,5 @@
 function xTicks = highlightTrials(dataName, nTrials)
-%HIGHLIGHTTRIALS sets the tr[ial tick marks for displaying data sets
+% HIGHLIGHTTRIALS sets the tr[ial tick marks for displaying data sets
 %    xTicks = highlightTrials(dataName, nTrials)
 
 switch dataName
@@ -9,7 +9,6 @@ switch dataName
       
    otherwise
       xTicks = [1 nTrials];
-      
       
 end
 

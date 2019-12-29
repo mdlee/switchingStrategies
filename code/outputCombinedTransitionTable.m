@@ -1,8 +1,9 @@
 function outputCombinedTransitionTable(dataName, modelName, strategyList, storePi)
-%OUTPUTCOMBINEDTRANSITIONTABLE Print to file a latex table that gives the
-%transition probabilities between strategies for a set of related models
-%currently supports only 2 or 3 datasets with bold then bold italic
-%highlighting of successive sets
+% OUTPUTCOMBINEDTRANSITIONTABLE Print to file a latex table that gives the
+%  transition probabilities between strategies for a set of related models
+%  currently supports only 2 or 3 datasets with bold then bold italic
+%  highlighting of successive sets
+%
 %   outputCombinedTransitionTable(dataName, modelName, strategyList, storePi)
 
 

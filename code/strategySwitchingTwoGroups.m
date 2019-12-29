@@ -22,16 +22,16 @@ analysisList = {...
    %  {'BrusovanskyEtAl2018FiveCues', 'ssLM_TTBEQWTTBWADDGuess', 1:26, [4 2]}; ...
    };
 
-drawIndividuals = false;
-drawChange = false;
-drawOverall = false;
-printTable = false;
-printCombinedTable = false;
-doPrint = true;
-
-nMaxSwitches = 5;
-posteriorMassRatio = 1/2; % consider posterior masses for changepoints that are at least this likely compared to the mode
-maxPosteriors = 5; % up to this many total possible changepoint possibilities in the posterior
+drawIndividuals = false;     % set to true to draw all partipant-level plots
+drawChange = false;          % set to true to draw just participants inferred to change strategies
+drawOverall = false;         % set of true to draw overall plot of all participants
+printTable = false;          % set to true to generate LATEX transition probability table to table subfolder
+printCombinedTable = false;  % set of true to generate LATEX transition table for Brusovansky conditions to table subfolder
+doPrint = true;              % set to true to print eps and png figures to figures subfolder  
+ 
+nMaxSwitches = 5;            % maximum number of strategy switches
+posteriorMassRatio = 1/2;    % consider posterior masses for changepoints that are at least this likely compared to the mode
+maxPosteriors = 5;           % up to this many total possible changepoint possibilities in the posterior
 
 %% Other constants
 scaleW = 1; scaleH = 0.8; lineWidth = 1; overallScale = 0.8;
@@ -480,7 +480,6 @@ for analysisIdx = 1:nAnalyses
             title(sprintf('Participant %d', subject), ...
                'fontsize'   , fontSize+ 2 , ...
                'fontweight' , 'normal'   );
-            
             
             % data
             for trialIdx = 1:d.nTrials

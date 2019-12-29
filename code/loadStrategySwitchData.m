@@ -1,5 +1,5 @@
 function d = loadStrategySwitchData(dataName)
-%LOADSTRATEGYSWITCHDATA d = loadStrategySwitchData(dataName)
+% LOADSTRATEGYSWITCHDATA d = loadStrategySwitchData(dataName)
 %   load a data set for strategy switch analysis
 
 % Initial load

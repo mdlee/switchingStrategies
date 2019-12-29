@@ -1,6 +1,6 @@
 function outputTransitionTable(dataName, modelName, strategyList, pi)
-%OUTPUTTRANSITIONTABLE Print to file a latex table that gives the
-%transition probabilities between strategies
+% OUTPUTTRANSITIONTABLE Print to file a latex table that gives the
+%   transition probabilities between strategies
 %   outputTransitionTable(dataName, modelName, strategyList, pi)
 
 nStrategies = numel(strategyList);
