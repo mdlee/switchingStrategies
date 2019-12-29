@@ -15,13 +15,13 @@ analysisList = {...
 drawIndividuals = false;     % set to true to draw all partipant-level plots
 drawChange = false;          % set to true to draw just participants inferred to change strategies
 drawOverall = false;         % set of true to draw overall plot of all participants
-printTable = false;          % set to true to generate LATEX transition probability table to table 								  subfolder
-printCombinedTable = false;  % set of true to generate LATEX transition table for Brusovansky 								   conditions to table subfolder
+printTable = false;          % set to true to generate LATEX transition probability table to table subfolder
+printCombinedTable = false;  % set of true to generate LATEX transition table for Brusovansky conditions to table subfolder
 doPrint = true;              % set to true to print eps and png figures to figures subfolder  
  
 nMaxSwitches = 5;            % maximum number of strategy switches
-posteriorMassRatio = 1/2;    % consider posterior masses for changepoints that are at least this 								likely compared to the mode
-maxPosteriors = 5;           % up to this many total possible changepoint possibilities in the 								   posterior
+posteriorMassRatio = 1/2;    % consider posterior masses for changepoints that are at least this likely compared to the mode
+maxPosteriors = 5;           % up to this many total possible changepoint possibilities in the posterior
 
 ```
 
@@ -115,15 +115,15 @@ d =
   struct with fields:
 
           nSubjects: 38                            # number of participants
-        nConditions: 2							   # number of experimental conditions		
-     conditionNames: {'Aloud'  'Silent'}		   # names of conditions
-            nTrials: 120						   # number of trials per participant
-              nCues: 4							   # number of cues describing alternatives
-      nAlternatives: 2							   # number of choice alternatives each trial
-          condition: [38×1 double]				   # which condition each participant did
-           decision: [38×120 double]			   # decision made by participant on trial
-            correct: [38×120 logical]			   # whether decision was correct
-               cues: [16×4 double]				   # description of each stimulus in terms of cues
+        nConditions: 2                             # number of experimental conditions		
+     conditionNames: {'Aloud'  'Silent'}           # names of conditions
+            nTrials: 120                           # number of trials per participant
+              nCues: 4                             # number of cues describing alternatives
+      nAlternatives: 2                             # number of choice alternatives each trial
+          condition: [38×1 double]                 # which condition each participant did
+           decision: [38×120 double]               # decision made by participant on trial
+            correct: [38×120 logical]              # whether decision was correct
+               cues: [16×4 double]                 # description of each stimulus in terms of cues
         searchOrder: [1 2 3 4]                     # order cues are searched (validity-based)
               stimA: [38×120 double]               # which stimulus was option A for each trial
               stimB: [38×120 double]               # which stimulus was option B for each trial
