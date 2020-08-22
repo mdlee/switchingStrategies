@@ -79,7 +79,7 @@ function colorVec = getStrategyColor(strategyName, pantone)
 % GETSTRATEGYCOLOR Get the pantone color of a strategy
 ```
 
-The color palette `pantoneColors.mat`.
+The color palette `pantoneColors.mat` shown in `pantoneColors.png`.
 
 ## JAGS Scripts
 
