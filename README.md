@@ -4,7 +4,7 @@ MATLAB and JAGS code for inferring switches in decision-making strategies in mul
 
 ## Code
 
-The two main code files are the MATLAB scripts `strategySwitchingOneGroup.m` for the hierarchical model and `strategySwitchingTwoGroups.m` for the latent mixture extension. Both scripts have the same set of user inputs in the first code block, controlling which data set is to be analyzed, and which plotting table analyses are to be done. There need to be subfolders called `figures` and `tables` for these outputs to be produced. The scripts produce additional output in the command window, including posterior estimates and Bayes factors.
+The two main code files are the MATLAB scripts `strategySwitchingOneGroup.m` for the hierarchical model and `strategySwitchingTwoGroups.m` for the latent mixture extension. [The `strategySwitchingTwoGroups.m` is more general, and more up to date]. Both scripts have the same set of user inputs in the first code block, controlling which data set is to be analyzed, and which plotting table analyses are to be done. There need to be subfolders called `figures` and `tables` for these outputs to be produced. The scripts produce additional output in the command window, including posterior estimates and Bayes factors.
 
 ```
 % analysis list has data name, model name, subject list, number of rows and columns for plotting
