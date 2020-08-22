@@ -1,48 +1,43 @@
 # switching strategies: Guess, TTB, Tally, WADD, WADDprob, Saturated
-
-data{
-	for (m in 1:nStrategies){
-	   baseStrategies[m] = 1
-	}
-}
-
 model{
-  for (i in 1:nSubjects){
-	  for (t in 1:nTrials){
-	    # Observed decision
-	    decision[i, t] ~ dbern(choice[i, z[i, stage[i, t]], type[i, t]])
-	    # Stage for this subject at this trial
-		  stage[i, t] = sum(beyond[i, t, 1:nMaxSwitches]) + 1
-		  for (k in 1:nMaxSwitches){
-		    # is trial to the right of boundary?
-		    beyond[i, t, k] = step(t - tau[i, k] - 1)
-	    }
-	  }
+ for (i in 1:nSubjects){
+	for (t in 1:nTrials){
 
-	  # Guess
-    choice[i, 1, 1] = 0.5
-    choice[i, 1, 2] = 0.5
-    choice[i, 1, 3] = 0.5
+	  # Observed decision
+	  y[i, t] ~ dbern(theta[i, z[i, omega[i, t]], type[i, t]])
+
+	  # Stage for this subject at this trial
+	  omega[i, t] = sum(omegaTmp[i, t, ]) + 1
+	  for (k in 1:nMaxSwitches){
+		# is trial to the right of boundary?
+	    omegaTmp[i, t, k] = step(t - tau[i, k] - 1)
+	  }
+	}
+
+	# Guess
+    theta[i, 1, 1] = 0.5
+    theta[i, 1, 2] = 0.5
+    theta[i, 1, 3] = 0.5
     # TTB
-    choice[i, 2, 1] = 1 - epsilon[i, 1]
-    choice[i, 2, 2] = 1 - epsilon[i, 1]
-    choice[i, 2, 3] = 1 - epsilon[i, 1]
+    theta[i, 2, 1] = 1 - epsilon[i, 1]
+    theta[i, 2, 2] = 1 - epsilon[i, 1]
+    theta[i, 2, 3] = 1 - epsilon[i, 1]
     # TALLY
-    choice[i, 3, 1] = 1 - epsilon[i, 2]
-    choice[i, 3, 2] = epsilon[i, 2]
-    choice[i, 3, 3] = 0.5
+    theta[i, 3, 1] = 1 - epsilon[i, 2]
+    theta[i, 3, 2] = epsilon[i, 2]
+    theta[i, 3, 3] = 0.5
     # WADD
-    choice[i, 4, 1] = 1 - epsilon[i, 3]
-    choice[i, 4, 2] = epsilon[i, 3]
-    choice[i, 4, 3] = 1 - epsilon[i, 3]
+    theta[i, 4, 1] = 1 - epsilon[i, 3]
+    theta[i, 4, 2] = epsilon[i, 3]
+    theta[i, 4, 3] = 1 - epsilon[i, 3]
     # WADDprob
-    choice[i, 5, 1] = 1 - epsilon[i, 4]
-    choice[i, 5, 2] = epsilon[i, 6]
-    choice[i, 5, 3] = 1 - epsilon[i, 5]    
+    theta[i, 5, 1] = 1 - epsilon[i, 4]
+    theta[i, 5, 2] = epsilon[i, 6]
+    theta[i, 5, 3] = 1 - epsilon[i, 5]    
     # Saturated
-    choice[i, 6, 1] = epsilon[i, 7]
-    choice[i, 6, 2] = epsilon[i, 8]
-    choice[i, 6, 3] = epsilon[i, 9]
+    theta[i, 6, 1] = epsilon[i, 7]
+    theta[i, 6, 2] = epsilon[i, 8]
+    theta[i, 6, 3] = epsilon[i, 9]
     
     # Pararameter priors
     # Error rate bounded for TTB, TALLY and WADD
@@ -58,32 +53,38 @@ model{
     for (j in 7:9){
       epsilon[i, j] ~ dunif(0, 1)
     }
-	  # Strategy switch priors
-	  tau[i, 1:nMaxSwitches] = sort(tauTmp[i, ])
-	  for (x in 1:nMaxSwitches){
-	    tauTmp[i, x] ~ dunif(1, gamma[i]/(1-gamma[i])*nTrials)
-	  }
-	  z[i, 1] ~ dcat(piPrime[1:nStrategies])
-    for (idx in 2:(nMaxSwitches+1)){
-      z[i, idx] ~ dcat(pi[z[i, idx-1], 1:nStrategies])
-    }
-    gamma[i] ~ dnorm(muGamma[x[i]+1], 1/sigmaGamma[x[i]+1]^2)T(0.5, 1)
+
+	# Strategy switch point
+	tau[i, 1:nMaxSwitches] = sort(tauTmp[i, ])
+	for (x in 1:nMaxSwitches){
+	  tauTmp[i, x] ~ dunif(1, gamma[i]/(1-gamma[i])*nTrials)
+	}
+    # Strategy propensity
     x[i] ~ dbern(phi)
+	gamma[i] ~ dnorm(muGamma[x[i]+1], 1/sigmaGamma[x[i]+1]^2)T(0.5, 1)
+
+	# Strategy use
+	z[i, 1] ~ dcat(piPrime)
+    for (k in 1:nMaxSwitches){
+      z[i, k+1] ~ dcat(pi[z[i, k], ])
+    }
   }
-  # gamma groups
+
+  # Gamma groups
   for (g in 1:2){
-  	muGammaTmp[g] ~ dunif(0.5, 1)
-  	sigmaGamma[g] ~ dunif(0, 0.5)
+    muGammaTmp[g] ~ dunif(0.5, 1)
+    sigmaGamma[g] ~ dunif(0, 0.5)
   }
   muGamma = sort(muGammaTmp)
   phi ~ dunif(0, 1)
 
   # Strategy baserate
-  piPrime ~ ddirch(baseStrategies[1:nStrategies])
+  baseStrategies = rep(1, nStrategies)
+  piPrime ~ ddirch(baseStrategies)
   for (j1 in 1:nStrategies){
     for (j2 in 1:nStrategies){
       basePi[j1, j2] = 1 - equals(j1, j2)  # 0 if j1 == j2, 1 otherwise
     }
-    pi[j1, 1:nStrategies] ~ ddirch(basePi[j1, 1:nStrategies])
+    pi[j1, 1:nStrategies] ~ ddirch(basePi[j1, ])
   }
-}
+ }  

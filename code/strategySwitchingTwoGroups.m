@@ -6,7 +6,7 @@ clear; close all;
 
 % analysis list has data name, model name, subject list, number of rows and columns for plotting
 analysisList = {...
-     {'WalshGluck2016', 'ssLM_TTBTallyWADDGuess', 1:38, [4, 2]}; ...
+    % {'WalshGluck2016', 'ssLM_TTBTallyWADDGuess', 1:38, [4, 2]}; ...
     %  {'WalshGluck2016Aloud', 'ssLM_TTBTallyWADDGuessNew', 1:19, [4, 2]}; ...
     %  {'WalshGluck2016Silent', 'ssLM_TTBTallyWADDGuess', 1:19, [4, 2]}; ...
     %  {'LeeEtAl2014Exp1', 'ssLM_TTBTallyWADDGuess', 1:30, [4, 2]}; ...
@@ -16,14 +16,14 @@ analysisList = {...
     %  {'NewellShanksAll2003', 'ssLM_TTBTallyWADDGuess', 1:16, [4 2]}; ...
     %  {'NewellShanksHighCost2003', 'ssLM_TTBTallyWADDGuess', 1:8, [4 2]}; ...
     %  {'NewellShanksLowCost2003', 'ssLM_TTBTallyWADDGuess', 1:8, [4 2]}; ...
-    %  {'HilbigMoshagen2014', 'ssLM_GuessTTBTallyWADDWADDprobSaturated', 1:79, [3 2]}; ... % 79
+     {'HilbigMoshagen2014', 'ssLM_GuessTTBTallyWADDWADDprobSaturated', 1:79, [3 2]}; ... % 79
     %  {'BrusovanskyEtAl2018ThreeCues', 'ssLM_TTBEQWTTBWADDGuess', 1:26, [4 2]}; ...
     %  {'BrusovanskyEtAl2018FourCues', 'ssLM_TTBEQWTTBWADDGuess', 1:26, [4 2]}; ...
     %  {'BrusovanskyEtAl2018FiveCues', 'ssLM_TTBEQWTTBWADDGuess', 1:26, [4 2]}; ...
     };
 
-drawIndividuals = false;              % set to true to draw all partipant-level plots
-drawChange = true;                   % set to true to draw just participants inferred to change strategies
+drawIndividuals = true;              % set to true to draw all partipant-level plots
+drawChange = false;                   % set to true to draw just participants inferred to change strategies
 drawOverall = false;                  % set of true to draw overall plot of all participants
 printTable = true;  CIflag = false;   % set to true to generate LATEX transition probability table to table subfolder
 printCombinedTable = false;           % set of true to generate LATEX transition table for Brusovansky conditions to table subfolder
@@ -350,6 +350,7 @@ for analysisIdx = 1:nAnalyses
     
     %% Draw individual results figures
     if drawIndividuals
+        
         for figIdx = 1:ceil(length(subjectList)/(nRows*nCols))
             
             if length(subjectList) >= nRows*nCols
@@ -415,28 +416,26 @@ for analysisIdx = 1:nAnalyses
                     end
                 end
                 
-                z = [z nan(nSubjects, 1)];
-                for trialIdx = 1:d.nTrials
-                    for strategyIdx = 1:nStrategies
-                        jointTauModeTmp = unique(jointTauMode(subject, :));
-                        if ~isempty(jointTauModeTmp)
-                            current = 0;
-                            for tauIdx = 1:length(jointTauModeTmp)
-                                if jointTauModeTmp(tauIdx) ~= d.nTrials
-                                    plot(ones(1, 2)*jointTauModeTmp(tauIdx)+0.5, [0 nStrategies+1], 'k--');
-                                end
-                                plot([current jointTauModeTmp(tauIdx)]+0.5, [z(subject, tauIdx) z(subject, tauIdx)], 'w-', ...
-                                    'linewidth', lineWidth+1);
-                                plot([current jointTauModeTmp(tauIdx)]+0.5, [z(subject, tauIdx) z(subject, tauIdx)], 'k-', ...
-                                    'linewidth', lineWidth);
-                                current = jointTauModeTmp(tauIdx);
-                            end
-                            plot([current d.nTrials]+0.5, [z(subject, tauIdx+1) z(subject, tauIdx+1)], 'w-', ...
-                                'linewidth', lineWidth+1);
-                            plot([current d.nTrials]+0.5, [z(subject, tauIdx+1) z(subject, tauIdx+1)], 'k-', ...
+                for posteriorIdx = 1:nPosteriors(subject)
+                    
+                    load(['storage/' modelName '_' dataName '_C_posterior' int2str(posteriorIdx)'], 'chains');
+                    z = get_matrix_from_coda(chains, 'z', @mode);
+                    z = [z nan(nSubjects, 1)];
+                    jointTauModeTmp = unique(jointTauMode(subject, :, posteriorIdx));
+                    current = 0;
+                    for tauIdx = 1:length(jointTauModeTmp)
+                        if jointTauModeTmp(tauIdx) ~= d.nTrials
+                            plot(ones(1, 2)*jointTauModeTmp(tauIdx)+0.5, [z(subject, tauIdx) z(subject, tauIdx+1)] + offset(posteriorIdx), 'k-', ...
                                 'linewidth', lineWidth);
                         end
+                        plot([current jointTauModeTmp(tauIdx)]+0.5, [z(subject, tauIdx) z(subject, tauIdx)] + offset(posteriorIdx), 'k-', ...
+                            'linewidth', lineWidth);
+                        current = jointTauModeTmp(tauIdx);
                     end
+                    plot([current d.nTrials]+0.5, [z(subject, tauIdx+1) z(subject, tauIdx+1)] + offset(posteriorIdx), 'k-', ...
+                        'linewidth', lineWidth);
+                    
+                    pause(0.1);
                 end
                 
                 pause(0.1);
@@ -628,8 +627,8 @@ for analysisIdx = 1:nAnalyses
         for idx = 1:nStrategies
             H(idx) = plot(-100, -100, 'o', ...
                 'markerfacecolor' , getStrategyColor(strategyList{idx}, pantone) , ...
-                'markeredgecolor' , 'w'                                                         , ...
-                'markersize'      , 12                                                          );
+                'markeredgecolor' , 'w'    , ...
+                'markersize'      , 12     );
         end
         legend(H, strategyList, ...
             'location' , 'eastoutside' , ...
