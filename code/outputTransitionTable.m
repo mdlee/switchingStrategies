@@ -1,9 +1,10 @@
-function outputTransitionTable(dataName, modelName, strategyList, pi)
+function outputTransitionTableNew(dataName, modelName, strategyList, chains, CIflag, CIbounds)
 % OUTPUTTRANSITIONTABLE Print to file a latex table that gives the
 %   transition probabilities between strategies
 %   outputTransitionTable(dataName, modelName, strategyList, pi)
 
 nStrategies = numel(strategyList);
+pi = get_matrix_from_coda(chains, 'pi', @mean);
 
 fid = fopen(sprintf('tables/piTable_%s_%s', dataName, modelName), 'w');
 fprintf(fid, '\\begin{table}\n');
@@ -22,7 +23,12 @@ for idx1 = 1:nStrategies
       if idx1 == idx2
          str = sprintf('%s & --', str);
       else
-         str = sprintf('%s & %1.2f', str, pi(idx1, idx2));
+          if CIflag % show CIs
+          bounds = prctile(chains.(sprintf('pi_%d_%d', idx1, idx2))(:), CIbounds);
+         str = sprintf('%s & %1.2f (%1.2f--%1.2f)', str, pi(idx1, idx2), bounds);
+          else
+              str = sprintf('%s & %1.2f', str, pi(idx1, idx2));
+          end
       end
    end
    fprintf(fid, sprintf('%s \\\\\\\\ \n', str));
